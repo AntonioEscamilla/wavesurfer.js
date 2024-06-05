@@ -141,6 +141,18 @@ class HoverPlugin extends BasePlugin<HoverPluginEvents, HoverPluginOptions> {
     return `${minutes}:${paddedSeconds}`
   }
 
+  private frequencyToNoteAndCents(frequency: number) {
+    const A4 = 440;
+    const C0 = A4 * Math.pow(2, -4.75);
+    const name = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+    const h = Math.round(12 * Math.log2(frequency / C0));
+    const octave = Math.floor(h / 12);
+    const n = h % 12;
+    const note = name[n] + octave;
+    const cents = Math.floor(1200 * Math.log2(frequency / (C0 * Math.pow(2, h / 12))));
+    return { note, cents };
+  }
+
   private onPointerMove = (e: PointerEvent | WheelEvent) => {
     if (!this.wavesurfer) return
 
@@ -170,8 +182,10 @@ class HoverPlugin extends BasePlugin<HoverPluginEvents, HoverPluginOptions> {
       this.freq_label.style.display = 'none';                             // Optionally, hide the label by setting its display property to 'none'
       this.horizontalLine.style.opacity = '0';                            // Hide the horizontal line by setting its opacity to 0
     } else {
-      const frequency = ((1 - relY) * 22050).toFixed(0);
-      this.freq_label.textContent = `${frequency} Hz`;
+      const frequency = ((1 - relY) * 22050)
+      const { note, cents } = this.frequencyToNoteAndCents(frequency);
+      const freq_str = frequency.toFixed(0);
+      this.freq_label.textContent = `${freq_str} Hz (${note} ${cents}cents)`;
       this.freq_label.style.display = 'block';
       this.horizontalLine.style.transform = `translateY(${posY}px)`;      // Update the position of the horizontal line
       this.horizontalLine.style.opacity = '1'                             // Show the horizontal line by setting its opacity to 1

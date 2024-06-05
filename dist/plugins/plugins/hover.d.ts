@@ -1,7 +1,8 @@
 /**
  * The Hover plugin follows the mouse and shows a timestamp
  * Note for me:
- * access the  WaveSurfer.js directory inside the Score_Following project
+ * access the  WaveSurfer.js directory
+ * install dependencies running: npm install --force
  * build the WaveSurfer.js library by running the build script: npm run build
  */
 import BasePlugin, { type BasePluginEvents } from '../base-plugin.js';
@@ -33,6 +34,7 @@ declare class HoverPlugin extends BasePlugin<HoverPluginEvents, HoverPluginOptio
     /** Called by wavesurfer, don't call manually */
     onInit(): void;
     private formatTime;
+    private frequencyToNoteAndCents;
     private onPointerMove;
     private onPointerLeave;
     /** Unmount */
